@@ -102,56 +102,102 @@
   SELECT hours.HOUR, COUNT(ANIMAL_OUTS.ANIMAL_ID) AS "COUNT" FROM hours
   LEFT JOIN ANIMAL_OUTS ON hours.HOUR = HOUR(ANIMAL_OUTS.DATETIME)
   GROUP BY hours.HOUR
-  ORDER BY hours.HOUR
+  ORDER BY hours.HOUR;
   ```
 
-16) 
+16) 이름 없는 동물의 아이디 (https://programmers.co.kr/learn/courses/30/lessons/59039)
 
-- 
+- ```sql
+  SELECT ANIMAL_ID FROM ANIMAL_INS WHERE NAME IS NULL;
+  ```
 
-17)
+17) 이름이 있는 동물의 아이디 (https://programmers.co.kr/learn/courses/30/lessons/59407)
 
-- 
+- ```sql
+  SELECT ANIMAL_ID FROM ANIMAL_INS WHERE NAME IS NOT NULL;
+  ```
 
-18)
+18) Null 처리하기 (https://programmers.co.kr/learn/courses/30/lessons/59410)
 
-- 
+- ```sql
+  SELECT ANIMAL_TYPE, IFNULL(NAME, "No name") AS NAME, SEX_UPON_INTAKE FROM ANIMAL_INS
+  ORDER BY ANIMAL_ID;
+  ```
 
-19)
+19) 없어진 기록 찾기 (https://programmers.co.kr/learn/courses/30/lessons/59042)
 
-- 
+- ```sql
+  SELECT ANIMAL_OUTS.ANIMAL_ID, ANIMAL_OUTS.NAME FROM ANIMAL_OUTS
+  LEFT JOIN ANIMAL_INS ON ANIMAL_OUTS.ANIMAL_ID = ANIMAL_INS.ANIMAL_ID
+  WHERE ANIMAL_INS.DATETIME IS NULL 
+  AND ANIMAL_OUTS.DATETIME IS NOT NULL
+  ORDER BY ANIMAL_OUTS.ANIMAL_ID;
+  ```
 
-20)
+20) 있었는데요 없었습니다 (https://programmers.co.kr/learn/courses/30/lessons/59043)
 
-- 
+- ```sql
+  SELECT ANIMAL_INS.ANIMAL_ID, ANIMAL_INS.NAME FROM ANIMAL_INS 
+  LEFT JOIN ANIMAL_OUTS ON ANIMAL_INS.ANIMAL_ID = ANIMAL_OUTS.ANIMAL_ID
+  WHERE ANIMAL_OUTS.DATETIME < ANIMAL_INS.DATETIME
+  ORDER BY ANIMAL_INS.DATETIME;
+  ```
 
-21)
+21) 오랜 기간 보호한 동물(1) (https://programmers.co.kr/learn/courses/30/lessons/59044)
 
-- 
+- ```sql
+  SELECT ANIMAL_INS.NAME, ANIMAL_INS.DATETIME FROM ANIMAL_INS
+  LEFT JOIN ANIMAL_OUTS ON ANIMAL_INS.ANIMAL_ID = ANIMAL_OUTS.ANIMAL_ID
+  WHERE ANIMAL_OUTS.DATETIME IS NULL
+  ORDER BY ANIMAL_INS.DATETIME
+  LIMIT 3;
+  ```
 
-22)
+22) 보호소에서 중성화한 동물 (https://programmers.co.kr/learn/courses/30/lessons/59045)
 
-- 
+- ```sql
+  SELECT ANIMAL_INS.ANIMAL_ID, ANIMAL_INS.ANIMAL_TYPE, ANIMAL_INS.NAME FROM ANIMAL_INS
+  LEFT JOIN ANIMAL_OUTS ON ANIMAL_INS.ANIMAL_ID = ANIMAL_OUTS.ANIMAL_ID
+  WHERE ANIMAL_INS.SEX_UPON_INTAKE LIKE "%Intact%"
+      AND ANIMAL_OUTS.SEX_UPON_OUTCOME REGEXP "^Spayed|^Neutered";
+  ```
 
-23)
+23) 루시와 엘라 찾기 (https://programmers.co.kr/learn/courses/30/lessons/59046)
 
-- 
+- ```sql
+  SELECT ANIMAL_ID, NAME, SEX_UPON_INTAKE FROM ANIMAL_INS
+  WHERE NAME IN ("Lucy", "Ella", "Pickle", "Rogan", "Sabrina", "Mitty");
+  ```
 
-24)
+24) 이름에 el이 들어가는 동물 찾기 (https://programmers.co.kr/learn/courses/30/lessons/59047)
 
-- 
+- ```sql
+  SELECT ANIMAL_ID, NAME FROM ANIMAL_INS
+  WHERE REGEXP_LIKE(NAME, 'el', 'i')
+  	AND ANIMAL_TYPE = 'Dog'
+  ORDER BY NAME;
+  ```
 
-25)
+25) 중성화 여부 파악하기 (https://programmers.co.kr/learn/courses/30/lessons/59409)
 
-- 
+- ```sql
+  SELECT ANIMAL_ID, NAME, IF(SEX_UPON_INTAKE REGEXP 'Spayed|Neutered', 'O', 'X') AS "중성화"
+  FROM ANIMAL_INS
+  ORDER BY ANIMAL_ID;
+  ```
 
-26)
+26) 오랜 기간 보호한 동물 (2) (https://programmers.co.kr/learn/courses/30/lessons/59411)
 
-- 
+- ```sql
+  SELECT ANIMAL_INS.ANIMAL_ID, ANIMAL_INS.NAME
+  FROM ANIMAL_INS 
+  LEFT JOIN ANIMAL_OUTS ON ANIMAL_INS.ANIMAL_ID = ANIMAL_OUTS.ANIMAL_ID
+  ORDER BY ( ANIMAL_OUTS.DATETIME - ANIMAL_INS.DATETIME ) desc LIMIT 2;
+  ```
 
-27)
+27) DATETIME에서 DATE으로 형 번환 (https://programmers.co.kr/learn/courses/30/lessons/59414)
 
-- 
-
-
-
+- ```sql
+  SELECT ANIMAL_ID, NAME, DATE_FORMAT(DATETIME, '%Y-%m-%d') FROM ANIMAL_INS
+  ORDER BY ANIMAL_ID;
+  ```
